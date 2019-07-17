@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"log"
+	"os"
 	"strconv"
 	"strings"
 
@@ -13,7 +14,17 @@ var app = cli.NewApp()
 
 func prepareApp() {
 	app.Action = func(c *cli.Context) error {
-		fmt.Println("Type \"gotask --help\" or \"gotask help\" to get info about possible usage.")
+		if len(c.Args()) > 0 {
+			fmt.Println(
+				"Type \"gotask\", \"gotask --help\"" +
+					" or \"gotask help\" to get info about possible usage.")
+		} else {
+			err := cli.ShowAppHelp(c)
+			if err != nil {
+				log.Fatal(err)
+			}
+
+		}
 		return nil
 	}
 	appInfo()
@@ -53,12 +64,14 @@ func appCommands() {
 		},
 		{
 			Name:    "done",
-			Aliases: []string{"s"},
+			Aliases: []string{"d"},
 			Usage:   "Complete task with given id.",
 			Action: func(c *cli.Context) error {
-				id, err := strconv.Atoi(c.Args().Get(0))
+				arg := c.Args().Get(0)
+				id, err := strconv.Atoi(arg)
 				if err != nil {
-					log.Fatal(err)
+					fmt.Printf("Invalid input: %q.\n", arg)
+					os.Exit(1)
 				}
 				fmt.Printf("Done task with id: \"%d\".\n", id)
 				return nil

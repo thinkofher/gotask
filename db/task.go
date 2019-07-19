@@ -33,8 +33,8 @@ func (t *Task) ParseTags(tagStr string, sep string) {
 func (t Task) String() string {
 	tags := strings.Join(t.Tags, ", ")
 	return fmt.Sprintf(
-		"Task: %s\nTags: %s\nAdded: %s",
-		t.Body, tags, t.Date.Format(time.ANSIC))
+		"Task: %s\nId: %d\nTags: %s\nAdded: %s",
+		t.Body, t.Id, tags, t.Date.Format(time.ANSIC))
 }
 
 func TaskFromJson(jsonBytes []byte) (Task, error) {

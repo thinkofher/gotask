@@ -7,7 +7,7 @@ import (
 	"time"
 )
 
-// Represents single taks
+// Represents single taks.
 type Task struct {
 	Id   int       `json:"id"`
 	Body string    `json:"body"`
@@ -15,9 +15,15 @@ type Task struct {
 	Date time.Time `json:"date"`
 }
 
-// Returns the JSON encoding of task struct
+// Returns the JSON encoding of task struct.
 func (t Task) ToJson() ([]byte, error) {
 	return json.Marshal(t)
+}
+
+// Updates fields of Task with data from given
+// []byte slice.
+func (t *Task) ReadFromJson(jsonBytes []byte) error {
+	return json.Unmarshal(jsonBytes, &t)
 }
 
 func (t *Task) SetCurrDate() {
@@ -25,7 +31,7 @@ func (t *Task) SetCurrDate() {
 }
 
 // Creates a list of strings (tags) from tags in
-// string separated with given character
+// string separated with given character.
 func (t *Task) ParseTags(tagStr string, sep string) {
 	t.Tags = strings.Split(tagStr, sep)
 }

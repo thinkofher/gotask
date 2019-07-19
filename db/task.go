@@ -37,10 +37,20 @@ func (t Task) String() string {
 		t.Body, tags, t.Date.Format(time.ANSIC))
 }
 
-func TaskFromJson(jsonBytes []byte, t *Task) error {
-	return json.Unmarshal(jsonBytes, &t)
+func TaskFromJson(jsonBytes []byte) (Task, error) {
+	var t Task
+	err := json.Unmarshal(jsonBytes, &t)
+	if err != nil {
+		return t, err
+	}
+	return t, nil
 }
 
-func TasksFromJson(jsonBytes []byte, t *[]Task) error {
-	return json.Unmarshal(jsonBytes, &t)
+func TasksFromJson(jsonBytes []byte) ([]Task, error) {
+	var t []Task
+	err := json.Unmarshal(jsonBytes, &t)
+	if err != nil {
+		return t, err
+	}
+	return t, nil
 }

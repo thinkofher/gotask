@@ -31,3 +31,14 @@ func InitDB(dbPath string) error {
 		return nil
 	})
 }
+// itob returns an 8-byte big endian representation of v.
+func itob(v int) []byte {
+	b := make([]byte, 8)
+	binary.BigEndian.PutUint64(b, uint64(v))
+	return b
+}
+
+// btoi returns int representation of b.
+func btoi(b []byte) int {
+	return int(binary.BigEndian.Uint64(b))
+}

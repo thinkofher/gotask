@@ -2,6 +2,7 @@ package db
 
 import (
 	"encoding/json"
+	"fmt"
 	"strings"
 	"time"
 )
@@ -27,6 +28,13 @@ func (t *Task) SetCurrDate() {
 // string separated with given character
 func (t *Task) ParseTags(tagStr string, sep string) {
 	t.Tags = strings.Split(tagStr, sep)
+}
+
+func (t Task) String() string {
+	tags := strings.Join(t.Tags, ", ")
+	return fmt.Sprintf(
+		"Task: %s\nTags: %s\nAdded: %s",
+		t.Body, tags, t.Date.Format(time.ANSIC))
 }
 
 func TaskFromJson(jsonBytes []byte, t *Task) error {

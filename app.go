@@ -104,7 +104,7 @@ func appCommands() {
 					fmt.Println("There is no such a task.")
 					os.Exit(1)
 				}
-				fmt.Printf("%q\n", showTask)
+				fmt.Printf("%v\n", showTask)
 				return nil
 			},
 		},

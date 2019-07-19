@@ -5,6 +5,7 @@ import (
 	"log"
 	"os"
 	"strconv"
+	"strings"
 
 	"github.com/thinkofher/gotask/db"
 	"github.com/urfave/cli"
@@ -92,19 +93,33 @@ func appCommands() {
 			Usage:   "Show tasks in your tasks list",
 			Flags: []cli.Flag{
 				cli.IntFlag{
-					Name:        "id",
-					Usage:       "Show task with given id",
-					Value:       1,
+					Name: "id",
+					Usage: "Show task with given id, " +
+						"leave id equal to 0 if you want to lists all tasks.",
+					Value:       0,
 					Destination: &taskId,
 				},
 			},
 			Action: func(c *cli.Context) error {
-				showTask, err := db.GetTask(taskId)
-				if err != nil {
-					fmt.Println("There is no such a task.")
-					os.Exit(1)
+				if taskId == 0 {
+					tasks, err := db.GetAllTasks()
+					if err != nil {
+						log.Fatal(err)
+					}
+
+					stasks := make([]string, len(tasks))
+					for i, val := range tasks {
+						stasks[i] = fmt.Sprintf("%v", val)
+					}
+					fmt.Println(strings.Join(stasks, "\n\n"))
+				} else {
+					showTask, err := db.GetTask(taskId)
+					if err != nil {
+						fmt.Println("There is no such a task.")
+						os.Exit(1)
+					}
+					fmt.Printf("%v\n", showTask)
 				}
-				fmt.Printf("%v\n", showTask)
 				return nil
 			},
 		},

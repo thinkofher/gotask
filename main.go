@@ -9,13 +9,15 @@ import (
 	"github.com/thinkofher/gotask/db"
 )
 
+var taskdbPath = ".tasks.db"
+
 func main() {
 	home, err := homedir.Dir()
 	if err != nil {
 		log.Fatal(err)
 	}
-	dbPath := filepath.Join(home, ".tasks.db")
 
+	dbPath := filepath.Join(home, taskdbPath)
 	err = db.InitDB(dbPath)
 	if err != nil {
 		log.Fatal(err)

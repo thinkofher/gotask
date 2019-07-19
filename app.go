@@ -5,8 +5,8 @@ import (
 	"log"
 	"os"
 	"strconv"
-	"strings"
 
+	"github.com/thinkofher/gotask/db"
 	"github.com/urfave/cli"
 )
 
@@ -39,26 +39,72 @@ func appInfo() {
 	app.Version = "0.0.1"
 }
 
+var task db.Task
+var tagSeparator string
+var taskId int
+
 func appCommands() {
 	app.Commands = []cli.Command{
 		{
 			Name:    "add",
 			Aliases: []string{"a"},
 			Usage:   "Add task to your tasks list",
+			Flags: []cli.Flag{
+				cli.StringFlag{
+					Name:        "body",
+					Usage:       "Fill it with something you want or must do",
+					Value:       "Sample task content.",
+					Destination: &task.Body,
+				},
+				cli.StringFlag{
+					Name:  "tags",
+					Usage: "You can easly sort your tasks with tags",
+				},
+				cli.StringFlag{
+					Name:        "sep",
+					Usage:       "Character to separate tags",
+					Value:       ",",
+					Destination: &tagSeparator,
+				},
+			},
 			Action: func(c *cli.Context) error {
-				task := strings.Join(c.Args(), " ")
+				if c.NArg() > 0 {
+					task.Body = c.Args().Get(0)
+				}
+				task.ParseTags(c.String("tags"), tagSeparator)
+				task.SetCurrDate()
+
+				err := db.AddTask(&task)
+				if err != nil {
+					log.Fatal(err)
+				}
+
 				fmt.Printf(
 					"Task %q added to your tasks list.\n",
 					task)
+
 				return nil
 			},
 		},
 		{
 			Name:    "show",
 			Aliases: []string{"s"},
-			Usage:   "Show tasks in your tasks list.",
+			Usage:   "Show tasks in your tasks list",
+			Flags: []cli.Flag{
+				cli.IntFlag{
+					Name:        "id",
+					Usage:       "Show task with given id",
+					Value:       1,
+					Destination: &taskId,
+				},
+			},
 			Action: func(c *cli.Context) error {
-				fmt.Println("Testing...")
+				showTask, err := db.GetTask(taskId)
+				if err != nil {
+					fmt.Println("There is no such a task.")
+					os.Exit(1)
+				}
+				fmt.Printf("%q\n", showTask)
 				return nil
 			},
 		},

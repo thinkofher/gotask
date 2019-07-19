@@ -42,7 +42,9 @@ func appInfo() {
 
 var task db.Task
 var tagSeparator string
+
 var taskId int
+var fullInfo bool
 
 func appCommands() {
 	app.Commands = []cli.Command{
@@ -81,8 +83,8 @@ func appCommands() {
 				}
 
 				fmt.Printf(
-					"Task %q added to your tasks list.\n",
-					task)
+					"Task \"%s\" added to your tasks list with id: %d.\n",
+					task.Body, task.Id)
 
 				return nil
 			},
@@ -92,6 +94,11 @@ func appCommands() {
 			Aliases: []string{"s"},
 			Usage:   "Show tasks in your tasks list",
 			Flags: []cli.Flag{
+				cli.BoolFlag{
+					Name:        "full-info",
+					Usage:       "Check if you want to see full infor about tasks.",
+					Destination: &fullInfo,
+				},
 				cli.IntFlag{
 					Name: "id",
 					Usage: "Show task with given id, " +
@@ -104,14 +111,23 @@ func appCommands() {
 				if taskId == 0 {
 					tasks, err := db.GetAllTasks()
 					if err != nil {
-						log.Fatal(err)
+						return err
 					}
 
 					stasks := make([]string, len(tasks))
 					for i, val := range tasks {
-						stasks[i] = fmt.Sprintf("%v", val)
+						if fullInfo {
+							stasks[i] = fmt.Sprintf("Task no. %d)\n%v", i, val)
+						} else {
+							stasks[i] = fmt.Sprintf("Task no. %d) %s\n", i, val.Body)
+						}
 					}
-					fmt.Println(strings.Join(stasks, "\n\n"))
+
+					if fullInfo {
+						fmt.Println(strings.Join(stasks, "\n\n"))
+					} else {
+						fmt.Print(strings.Join(stasks, ""))
+					}
 				} else {
 					showTask, err := db.GetTask(taskId)
 					if err != nil {

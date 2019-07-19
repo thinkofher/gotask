@@ -39,7 +39,7 @@ func (t *Task) ParseTags(tagStr string, sep string) {
 func (t Task) String() string {
 	tags := strings.Join(t.Tags, ", ")
 	return fmt.Sprintf(
-		"Task: %s\nId: %d\nTags: %s\nAdded: %s",
+		"  Content: %s\nGlobal Id: %d\n     Tags: %s\n    Added: %s",
 		t.Body, t.Id, tags, t.Date.Format(time.ANSIC))
 }
 

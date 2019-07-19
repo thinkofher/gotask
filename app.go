@@ -59,11 +59,11 @@ func appCommands() {
 					Destination: &task.Body,
 				},
 				cli.StringFlag{
-					Name:  "tags",
+					Name:  "tags, t",
 					Usage: "You can easly sort your tasks with tags",
 				},
 				cli.StringFlag{
-					Name:        "sep",
+					Name:        "sep, s",
 					Usage:       "Character to separate tags",
 					Value:       ",",
 					Destination: &tagSeparator,
@@ -94,11 +94,11 @@ func appCommands() {
 			Usage:   "Show tasks in your tasks list",
 			Flags: []cli.Flag{
 				cli.BoolFlag{
-					Name:        "full-info",
-					Usage:       "Check if you want to see full infor about tasks.",
+					Name:  "full-info, f",
+					Usage: "Check if you want to see full infor about tasks.",
 				},
 				cli.IntFlag{
-					Name: "id",
+					Name: "id, i",
 					Usage: "Show task with given id, " +
 						"leave id equal to 0 if you want to lists all tasks.",
 					Value:       0,

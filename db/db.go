@@ -66,7 +66,7 @@ func GetTask(id int) (Task, error) {
 		return t, err
 	}
 
-	err = TaskFromJson(jsonTask, &t)
+	err = t.ReadFromJson(jsonTask)
 	if err != nil {
 		return t, err
 	}

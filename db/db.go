@@ -99,6 +99,14 @@ func GetAllTasks() ([]Task, error) {
 	return tasks, nil
 }
 
+// Removes task with given id from task bucket.
+func DeleteTask(id int) error {
+	return db.Update(func(tx *bolt.Tx) error {
+		b := tx.Bucket(taskBucket)
+		return b.Delete(itob(id))
+	})
+}
+
 // itob returns an 8-byte big endian representation of v.
 func itob(v int) []byte {
 	b := make([]byte, 8)

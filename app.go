@@ -44,7 +44,6 @@ var task db.Task
 var tagSeparator string
 
 var taskId int
-var fullInfo bool
 
 func appCommands() {
 	app.Commands = []cli.Command{
@@ -97,7 +96,6 @@ func appCommands() {
 				cli.BoolFlag{
 					Name:        "full-info",
 					Usage:       "Check if you want to see full infor about tasks.",
-					Destination: &fullInfo,
 				},
 				cli.IntFlag{
 					Name: "id",
@@ -114,27 +112,35 @@ func appCommands() {
 						return err
 					}
 
-					stasks := make([]string, len(tasks))
-					for i, val := range tasks {
-						if fullInfo {
-							stasks[i] = fmt.Sprintf("Task no. %d)\n%v", i, val)
+					if len(tasks) > 0 {
+						stasks := make([]string, len(tasks))
+						for i, val := range tasks {
+							if c.Bool("full-info") {
+								stasks[i] = fmt.Sprintf("Task no. %d)\n%v", i+1, val)
+							} else {
+								stasks[i] = fmt.Sprintf("Task no. %d) %s\n", i+1, val.Body)
+							}
+						}
+
+						if c.Bool("full-info") {
+							fmt.Println(strings.Join(stasks, "\n\n"))
 						} else {
-							stasks[i] = fmt.Sprintf("Task no. %d) %s\n", i, val.Body)
+							fmt.Print(strings.Join(stasks, ""))
 						}
 					}
 
-					if fullInfo {
-						fmt.Println(strings.Join(stasks, "\n\n"))
-					} else {
-						fmt.Print(strings.Join(stasks, ""))
-					}
 				} else {
 					showTask, err := db.GetTask(taskId)
 					if err != nil {
 						fmt.Println("There is no such a task.")
 						os.Exit(1)
 					}
-					fmt.Printf("%v\n", showTask)
+
+					if c.Bool("full-info") {
+						fmt.Printf("%v\n", showTask)
+					} else {
+						fmt.Println(showTask.Body)
+					}
 				}
 				return nil
 			},

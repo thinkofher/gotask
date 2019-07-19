@@ -18,6 +18,10 @@ func (t Task) ToJson() ([]byte, error) {
 	return json.Marshal(t)
 }
 
+func (t *Task) SetCurrDate() {
+	t.Date = time.Now()
+}
+
 func TaskFromJson(jsonBytes []byte, t *Task) error {
 	return json.Unmarshal(jsonBytes, &t)
 }

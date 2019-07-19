@@ -162,3 +162,14 @@ func appCommands() {
 		},
 	}
 }
+
+// Checks if given []int slice contains
+// given integer.
+func intInSlice(i int, list []int) bool {
+	for _, val := range list {
+		if val == i {
+			return true
+		}
+	}
+	return false
+}

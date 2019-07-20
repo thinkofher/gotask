@@ -105,12 +105,12 @@ func appCommands() {
 				},
 			},
 			Action: func(c *cli.Context) error {
+				// 0 means to show all tasks
 				if taskId == 0 {
 					tasks, err := db.GetAllTasks()
 					if err != nil {
 						return err
 					}
-
 					if len(tasks) > 0 {
 						stasks := make([]string, len(tasks))
 						for i, val := range tasks {
@@ -126,8 +126,11 @@ func appCommands() {
 						} else {
 							fmt.Print(strings.Join(stasks, ""))
 						}
+					} else {
+						fmt.Println("You have no tasks to show.\n" +
+							"Try to add something with \"gotask add\".")
 					}
-
+					// Show only specific task
 				} else {
 					showTask, err := db.GetTask(taskId)
 					if err != nil {

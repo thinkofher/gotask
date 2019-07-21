@@ -84,6 +84,12 @@ func TagChecker(tag string) Checker {
 	return func(t Task) bool { return stringInSlice(tag, t.Tags) }
 }
 
+// Return Checker which checks if id of Task
+// is equal to given id
+func IdChecker(id int) Checker {
+	return func(t Task) bool { return t.Id == id }
+}
+
 // Checks if given []string slice contains
 // given string
 func stringInSlice(s string, list []string) bool {

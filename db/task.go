@@ -15,6 +15,9 @@ type Task struct {
 	Date time.Time `json:"date"`
 }
 
+// Chceks for specific informations about single task
+type Checker func(Task) bool
+
 // Returns the JSON encoding of task struct.
 func (t Task) ToJson() ([]byte, error) {
 	return json.Marshal(t)
@@ -59,4 +62,35 @@ func TasksFromJson(jsonBytes []byte) ([]Task, error) {
 		return t, err
 	}
 	return t, nil
+}
+
+// Apply given Checker funcs to slice of task and returns
+// Task slice, which fullfils Checkers requirements
+func TaskSelection(tasks []Task, funcs ...Checker) []Task {
+	var ans []Task
+	for _, task := range tasks {
+		for _, f := range funcs {
+			if f(task) {
+				ans = append(ans, task)
+			}
+		}
+	}
+	return ans
+}
+
+// Return Checker which checks if Task
+// contains given tag
+func TagChecker(tag string) Checker {
+	return func(t Task) bool { return stringInSlice(tag, t.Tags) }
+}
+
+// Checks if given []string slice contains
+// given string
+func stringInSlice(s string, list []string) bool {
+	for _, val := range list {
+		if val == s {
+			return true
+		}
+	}
+	return false
 }

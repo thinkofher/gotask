@@ -41,7 +41,8 @@ func appInfo() {
 
 var task db.Task
 
-var taskId int
+// TODO: Provide same cli interfaces for adding
+//       and deleting tasks (tag, id)
 
 func appCommands() {
 	app.Commands = []cli.Command{
@@ -89,21 +90,38 @@ func appCommands() {
 					Name:  "full-info, f",
 					Usage: "Check if you want to see full infor about tasks.",
 				},
-				cli.IntFlag{
-					Name: "id, i",
-					Usage: "Show task with given id, " +
-						"leave id equal to 0 if you want to lists all tasks.",
-					Value:       0,
-					Destination: &taskId,
+				cli.IntSliceFlag{
+					Name:  "id, i",
+					Usage: "Show tasks with given ids.",
+				},
+				cli.StringSliceFlag{
+					Name:  "tag, t",
+					Usage: "Show tasks, which contains given tag. You choose multiple tags.",
 				},
 			},
 			Action: func(c *cli.Context) error {
-				// 0 means to show all tasks
-				if taskId == 0 {
-					tasks, err := db.GetAllTasks()
-					if err != nil {
-						return err
-					}
+				var checkers []db.Checker
+
+				// Add id checkers
+				for _, id := range c.IntSlice("id") {
+					checkers = append(checkers, db.IdChecker(id))
+				}
+
+				// Add tag checkers
+				for _, tag := range c.StringSlice("tag") {
+					checkers = append(checkers, db.TagChecker(tag))
+				}
+
+				tasks, err := db.GetAllTasks()
+				if err != nil {
+					return err
+				}
+
+				// If len of checkers is equal to 0
+				// then show all tasks
+				// TODO: instead of re-using lines of code
+				//       create a functions for displaying tasks
+				if len(checkers) == 0 {
 					if len(tasks) > 0 {
 						stasks := make([]string, len(tasks))
 						for i, val := range tasks {
@@ -122,19 +140,28 @@ func appCommands() {
 					} else {
 						fmt.Println("You have no tasks to show.\n" +
 							"Try to add something with \"gotask add\".")
+						os.Exit(0)
 					}
-					// Show only specific task
 				} else {
-					showTask, err := db.GetTask(taskId)
-					if err != nil {
-						fmt.Println("There is no such a task.")
-						os.Exit(1)
-					}
+					tasks = db.TaskSelection(tasks, checkers...)
+					if len(tasks) > 0 {
+						stasks := make([]string, len(tasks))
+						for i, val := range tasks {
+							if c.Bool("full-info") {
+								stasks[i] = fmt.Sprintf("Task no. %d)\n%v", i+1, val)
+							} else {
+								stasks[i] = fmt.Sprintf("Task no. %d) %s\n", i+1, val.Body)
+							}
+						}
 
-					if c.Bool("full-info") {
-						fmt.Printf("%v\n", showTask)
+						if c.Bool("full-info") {
+							fmt.Println(strings.Join(stasks, "\n\n"))
+						} else {
+							fmt.Print(strings.Join(stasks, ""))
+						}
 					} else {
-						fmt.Println(showTask.Body)
+						fmt.Println("There aren't such tasks with given conditions.")
+						os.Exit(1)
 					}
 				}
 				return nil
@@ -167,6 +194,8 @@ func appCommands() {
 				// by which are tasks listed with
 				// "gotask" show command
 				locals := c.IntSlice("number")
+
+				// TODO: make use of Checkers
 
 				tasks, err := db.GetAllTasks()
 				if err != nil {

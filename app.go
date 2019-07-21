@@ -40,7 +40,6 @@ func appInfo() {
 }
 
 var task db.Task
-var tagSeparator string
 
 var taskId int
 
@@ -57,22 +56,16 @@ func appCommands() {
 					Value:       "Sample task content.",
 					Destination: &task.Body,
 				},
-				cli.StringFlag{
-					Name:  "tags, t",
-					Usage: "You can easly sort your tasks with tags",
-				},
-				cli.StringFlag{
-					Name:        "sep, s",
-					Usage:       "Character to separate tags",
-					Value:       ",",
-					Destination: &tagSeparator,
+				cli.StringSliceFlag{
+					Name:  "tag, t",
+					Usage: "Tag your task with any category you like (you can add multiple tags)",
 				},
 			},
 			Action: func(c *cli.Context) error {
 				if c.NArg() > 0 {
 					task.Body = c.Args().Get(0)
 				}
-				task.ParseTags(c.String("tags"), tagSeparator)
+				task.Tags = c.StringSlice("tag")
 				task.SetCurrDate()
 
 				err := db.AddTask(&task)

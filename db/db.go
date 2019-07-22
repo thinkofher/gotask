@@ -34,6 +34,8 @@ func InitDB(dbPath string) error {
 	})
 }
 
+// AddTask saves Task in taskBucket under key
+// equal to its id in form of JSON.
 func AddTask(t *Task) error {
 	return db.Update(func(tx *bolt.Tx) error {
 		b := tx.Bucket(taskBucket)
@@ -53,6 +55,8 @@ func AddTask(t *Task) error {
 	})
 }
 
+// GetTask returns task in form of Task struct
+// from taskBucket under the key equal to given id.
 func GetTask(id int) (Task, error) {
 	var t Task
 	var jsonTask []byte
@@ -75,6 +79,7 @@ func GetTask(id int) (Task, error) {
 
 }
 
+// GetAllTasks returns slice containing all Tasks from taskBucket.
 func GetAllTasks() ([]Task, error) {
 	var tasks []Task
 
@@ -99,7 +104,7 @@ func GetAllTasks() ([]Task, error) {
 	return tasks, nil
 }
 
-// Removes task with given id from task bucket.
+// DeleteTask removes task with given id from task bucket.
 func DeleteTask(id int) error {
 	return db.Update(func(tx *bolt.Tx) error {
 		b := tx.Bucket(taskBucket)

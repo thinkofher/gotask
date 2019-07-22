@@ -7,7 +7,7 @@ import (
 	"time"
 )
 
-// Represents single taks.
+// Task represents single taks.
 type Task struct {
 	Id   int       `json:"id"`
 	Body string    `json:"body"`
@@ -15,25 +15,26 @@ type Task struct {
 	Date time.Time `json:"date"`
 }
 
-// Chceks for specific informations about single task
+// Checker chceks for specific informations about single task.
 type Checker func(Task) bool
 
-// Returns the JSON encoding of task struct.
+// ToJson returns the JSON encoding of task struct.
 func (t Task) ToJson() ([]byte, error) {
 	return json.Marshal(t)
 }
 
-// Updates fields of Task with data from given
-// []byte slice.
+// ReadFromJson updates fields of Task with
+// data from given []byte slice.
 func (t *Task) ReadFromJson(jsonBytes []byte) error {
 	return json.Unmarshal(jsonBytes, &t)
 }
 
+// SetCurrDate updates Task time to current one.
 func (t *Task) SetCurrDate() {
 	t.Date = time.Now()
 }
 
-// Creates a list of strings (tags) from tags in
+// ParseTags creates a list of strings (tags) from tags in
 // string separated with given character.
 func (t *Task) ParseTags(tagStr string, sep string) {
 	t.Tags = strings.Split(tagStr, sep)
@@ -46,6 +47,8 @@ func (t Task) String() string {
 		t.Body, t.Id, tags, t.Date.Format(time.ANSIC))
 }
 
+// TaskFromJson returns Task parsed from given
+// bytes slice containg JSON.
 func TaskFromJson(jsonBytes []byte) (Task, error) {
 	var t Task
 	err := json.Unmarshal(jsonBytes, &t)
@@ -55,6 +58,8 @@ func TaskFromJson(jsonBytes []byte) (Task, error) {
 	return t, nil
 }
 
+// TasksFromJson returns Task slice parsed from given
+// bytes slice containg JSON.
 func TasksFromJson(jsonBytes []byte) ([]Task, error) {
 	var t []Task
 	err := json.Unmarshal(jsonBytes, &t)
@@ -64,8 +69,8 @@ func TasksFromJson(jsonBytes []byte) ([]Task, error) {
 	return t, nil
 }
 
-// Apply given Checker funcs to slice of task and returns
-// Task slice, which fullfils Checkers requirements
+// TaskSelection applies given Checker funcs to slice of tasks
+// and returns Task slice, which fullfils Checkers requirements.
 func TaskSelection(tasks []Task, funcs ...Checker) []Task {
 	var ans []Task
 	for _, task := range tasks {
@@ -78,20 +83,20 @@ func TaskSelection(tasks []Task, funcs ...Checker) []Task {
 	return ans
 }
 
-// Return Checker which checks if Task
-// contains given tag
+// TagChecker returns Checker which checks if Task
+// contains given tag.
 func TagChecker(tag string) Checker {
 	return func(t Task) bool { return stringInSlice(tag, t.Tags) }
 }
 
-// Return Checker which checks if id of Task
-// is equal to given id
+// IdChecker returns Checker which checks if id of Task
+// is equal to given id.
 func IdChecker(id int) Checker {
 	return func(t Task) bool { return t.Id == id }
 }
 
 // Checks if given []string slice contains
-// given string
+// given string.
 func stringInSlice(s string, list []string) bool {
 	for _, val := range list {
 		if val == s {

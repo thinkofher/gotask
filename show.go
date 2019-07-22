@@ -9,6 +9,9 @@ import (
 	"github.com/urfave/cli"
 )
 
+var checkers *[]db.Checker
+var tasks *[]db.Task
+
 var show = cli.Command{
 	Name:    "show",
 	Aliases: []string{"s"},
@@ -27,70 +30,46 @@ var show = cli.Command{
 			Usage: "Show tasks, which contains given tag. You choose multiple tags.",
 		},
 	},
-	Action: func(c *cli.Context) error {
-		var checkers []db.Checker
+	Before: func(c *cli.Context) error {
+		var localTasks []db.Task
+		var localCheckers []db.Checker
+		var err error
+
+		checkers = &localCheckers
+		tasks = &localTasks
 
 		// Add id checkers
 		for _, id := range c.IntSlice("id") {
-			checkers = append(checkers, db.IdChecker(id))
+			*checkers = append(*checkers, db.IdChecker(id))
 		}
 
 		// Add tag checkers
 		for _, tag := range c.StringSlice("tag") {
-			checkers = append(checkers, db.TagChecker(tag))
+			*checkers = append(*checkers, db.TagChecker(tag))
 		}
 
-		tasks, err := db.GetAllTasks()
+		*tasks, err = db.GetAllTasks()
 		if err != nil {
 			return err
 		}
 
-		// If len of checkers is equal to 0
-		// then show all tasks
-		// TODO: instead of re-using lines of code
-		//       create a functions for displaying tasks
-		if len(checkers) == 0 {
-			if len(tasks) > 0 {
-				stasks := make([]string, len(tasks))
-				for i, val := range tasks {
-					if c.Bool("full-info") {
-						stasks[i] = fmt.Sprintf("Task no. %d)\n%v", i+1, val)
-					} else {
-						stasks[i] = fmt.Sprintf("Task no. %d) %s\n", i+1, val.Body)
-					}
-				}
+		if len(*checkers) != 0 {
+			*tasks = db.TaskSelection(*tasks, *checkers...)
+		}
 
-				if c.Bool("full-info") {
-					fmt.Println(strings.Join(stasks, "\n\n"))
-				} else {
-					fmt.Print(strings.Join(stasks, ""))
-				}
-			} else {
-				fmt.Println("You have no tasks to show.\n" +
-					"Try to add something with \"gotask add\".")
-				os.Exit(0)
-			}
+		return nil
+	},
+	Action: func(c *cli.Context) error {
+		if len(*tasks) != 0 {
+			visTasks(*tasks, c.Bool("full-info"))
+			os.Exit(0)
+		} else if len(*checkers) != 0 {
+			fmt.Println("There aren't such tasks with given conditions.")
+			os.Exit(1)
 		} else {
-			tasks = db.TaskSelection(tasks, checkers...)
-			if len(tasks) > 0 {
-				stasks := make([]string, len(tasks))
-				for i, val := range tasks {
-					if c.Bool("full-info") {
-						stasks[i] = fmt.Sprintf("Task no. %d)\n%v", i+1, val)
-					} else {
-						stasks[i] = fmt.Sprintf("Task no. %d) %s\n", i+1, val.Body)
-					}
-				}
-
-				if c.Bool("full-info") {
-					fmt.Println(strings.Join(stasks, "\n\n"))
-				} else {
-					fmt.Print(strings.Join(stasks, ""))
-				}
-			} else {
-				fmt.Println("There aren't such tasks with given conditions.")
-				os.Exit(1)
-			}
+			fmt.Println("You have no tasks to show.\n" +
+				"Try to add something with \"gotask add\".")
+			os.Exit(0)
 		}
 		return nil
 	},

@@ -95,3 +95,21 @@ var show = cli.Command{
 		return nil
 	},
 }
+
+// Visualize given slice of Tasks with
+// short or full information
+func visTasks(tasks []db.Task, full bool) {
+	stasks := make([]string, len(tasks))
+	for i, val := range tasks {
+		if full {
+			stasks[i] = fmt.Sprintf("Task no. %d)\n%v", i+1, val)
+		} else {
+			stasks[i] = fmt.Sprintf("Task no. %d) %s\n", i+1, val.Body)
+		}
+	}
+	if full {
+		fmt.Println(strings.Join(stasks, "\n\n"))
+	} else {
+		fmt.Print(strings.Join(stasks, ""))
+	}
+}

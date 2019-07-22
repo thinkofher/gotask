@@ -40,7 +40,7 @@ var add = cli.Command{
 
 		fmt.Printf(
 			"Task \"%s\" added to your tasks list with id: %d.\n",
-			task.Body, task.Id)
+			task.Body, task.ID)
 
 		return nil
 	},

@@ -44,14 +44,14 @@ func AddTask(t *Task) error {
 		if err != nil {
 			return err
 		}
-		t.Id = int(id)
+		t.ID = int(id)
 
 		buf, err := t.ToJSON()
 		if err != nil {
 			return err
 		}
 
-		return b.Put(itob(t.Id), buf)
+		return b.Put(itob(t.ID), buf)
 	})
 }
 

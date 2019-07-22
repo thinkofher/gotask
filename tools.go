@@ -17,7 +17,7 @@ var parseCheckers = func(c *cli.Context) error {
 
 	// Add id checkers
 	for _, id := range c.IntSlice("id") {
-		*checkersp = append(*checkersp, db.IdChecker(id))
+		*checkersp = append(*checkersp, db.IDChecker(id))
 	}
 
 	// Add tag checkers

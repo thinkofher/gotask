@@ -32,13 +32,13 @@ var done = cli.Command{
 
 		if len(tasks) != 0 {
 			for _, val := range tasks {
-				err = db.DeleteTask(val.Id)
+				err = db.DeleteTask(val.ID)
 				if err != nil {
 					return err
 				}
 				if c.Bool("verbose") {
 					fmt.Printf("Task \"%s\" with global id: %d is done.\n",
-						val.Body, val.Id)
+						val.Body, val.ID)
 				}
 			}
 		} else if len(checkers) != 0 {

@@ -9,7 +9,7 @@ import (
 
 // Task represents single taks.
 type Task struct {
-	Id   int       `json:"id"`
+	ID   int       `json:"id"`
 	Body string    `json:"body"`
 	Tags []string  `json:"tags"`
 	Date time.Time `json:"date"`
@@ -43,8 +43,8 @@ func (t *Task) ParseTags(tagStr string, sep string) {
 func (t Task) String() string {
 	tags := strings.Join(t.Tags, ", ")
 	return fmt.Sprintf(
-		"  Content: %s\nGlobal Id: %d\n     Tags: %s\n    Added: %s",
-		t.Body, t.Id, tags, t.Date.Format(time.ANSIC))
+		"  Content: %s\nGlobal ID: %d\n     Tags: %s\n    Added: %s",
+		t.Body, t.ID, tags, t.Date.Format(time.ANSIC))
 }
 
 // TaskFromJSON returns Task parsed from given
@@ -91,8 +91,8 @@ func TagChecker(tag string) Checker {
 
 // IdChecker returns Checker which checks if id of Task
 // is equal to given id.
-func IdChecker(id int) Checker {
-	return func(t Task) bool { return t.Id == id }
+func IDChecker(id int) Checker {
+	return func(t Task) bool { return t.ID == id }
 }
 
 // Checks if given []string slice contains

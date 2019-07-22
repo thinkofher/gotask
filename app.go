@@ -50,6 +50,7 @@ func prepareApp() *cli.App {
 		return nil
 	}
 
+	// App information
 	app.Name = "gotask"
 	app.Usage = "Add, remove and edit tasks in your local database."
 	app.Author = "Beniamin Dudek"
@@ -57,9 +58,9 @@ func prepareApp() *cli.App {
 	app.Version = "0.0.1"
 
 	app.Commands = []cli.Command{
-		add,
-		show,
-		done,
+		add,  // ./add.go
+		show, // ./show.go
+		done, // ./done.go
 	}
 
 	return app

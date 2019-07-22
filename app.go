@@ -9,9 +9,6 @@ import (
 	"github.com/urfave/cli"
 )
 
-// TODO: Provide same cli interfaces for adding
-//       and deleting tasks (tag, id)
-
 // Path where database will be stored
 var taskdbPath = ".tasks.db"
 

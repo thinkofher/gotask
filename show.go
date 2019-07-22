@@ -16,7 +16,7 @@ var show = cli.Command{
 	Flags: []cli.Flag{
 		cli.BoolFlag{
 			Name:  "full-info, f",
-			Usage: "Check if you want to see full infor about tasks.",
+			Usage: "Check if you want to see full information about tasks.",
 		},
 		cli.IntSliceFlag{
 			Name:  "id, i",

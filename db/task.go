@@ -18,15 +18,15 @@ type Task struct {
 // Checker chceks for specific informations about single task.
 type Checker func(Task) bool
 
-// ToJson returns the JSON encoding of task struct.
-func (t Task) ToJson() ([]byte, error) {
+// ToJSON returns the JSON encoding of task struct.
+func (t Task) ToJSON() ([]byte, error) {
 	return json.Marshal(t)
 }
 
-// ReadFromJson updates fields of Task with
+// ReadFromJSON updates fields of Task with
 // data from given []byte slice.
-func (t *Task) ReadFromJson(jsonBytes []byte) error {
-	return json.Unmarshal(jsonBytes, &t)
+func (t *Task) ReadFromJSON(JSONBytes []byte) error {
+	return json.Unmarshal(JSONBytes, &t)
 }
 
 // SetCurrDate updates Task time to current one.
@@ -47,22 +47,22 @@ func (t Task) String() string {
 		t.Body, t.Id, tags, t.Date.Format(time.ANSIC))
 }
 
-// TaskFromJson returns Task parsed from given
+// TaskFromJSON returns Task parsed from given
 // bytes slice containg JSON.
-func TaskFromJson(jsonBytes []byte) (Task, error) {
+func TaskFromJSON(JSONBytes []byte) (Task, error) {
 	var t Task
-	err := json.Unmarshal(jsonBytes, &t)
+	err := json.Unmarshal(JSONBytes, &t)
 	if err != nil {
 		return t, err
 	}
 	return t, nil
 }
 
-// TasksFromJson returns Task slice parsed from given
-// bytes slice containg JSON.
-func TasksFromJson(jsonBytes []byte) ([]Task, error) {
+// TasksFromJSON returns Task slice parsed from given
+// bytes slice containg json.
+func TasksFromJSON(JSONBytes []byte) ([]Task, error) {
 	var t []Task
-	err := json.Unmarshal(jsonBytes, &t)
+	err := json.Unmarshal(JSONBytes, &t)
 	if err != nil {
 		return t, err
 	}

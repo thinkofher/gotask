@@ -46,7 +46,7 @@ func AddTask(t *Task) error {
 		}
 		t.Id = int(id)
 
-		buf, err := t.ToJson()
+		buf, err := t.ToJSON()
 		if err != nil {
 			return err
 		}
@@ -70,7 +70,7 @@ func GetTask(id int) (Task, error) {
 		return t, err
 	}
 
-	err = t.ReadFromJson(jsonTask)
+	err = t.ReadFromJSON(jsonTask)
 	if err != nil {
 		return t, err
 	}
@@ -88,7 +88,7 @@ func GetAllTasks() ([]Task, error) {
 		c := b.Cursor()
 
 		for key, val := c.First(); key != nil; key, val = c.Next() {
-			task, err := TaskFromJson(val)
+			task, err := TaskFromJSON(val)
 			if err != nil {
 				return err
 			}

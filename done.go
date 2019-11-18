@@ -30,6 +30,10 @@ var done = cli.Command{
 	Action: func(c *cli.Context) error {
 		var err error
 
+		if !(c.NumFlags() > 0) {
+			os.Exit(0)
+		}
+
 		if len(tasks) != 0 {
 			for _, val := range tasks {
 				err = db.DeleteTask(val.ID)

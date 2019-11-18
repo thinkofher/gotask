@@ -37,6 +37,11 @@ Usage
        --help, -h     show help
        --version, -v  print the version
 
+Sample session
+--------------
+
+[![asciicast](https://asciinema.org/a/282188.svg)](https://asciinema.org/a/282188)
+
 Used technologies
 -----------------
 
